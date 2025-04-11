@@ -1,0 +1,66 @@
+---
+title: "A Demonstration Flipbook"
+subtitle: "Selecting and Plotting A Variable Across 2 Groups "  
+author: 
+  - "Peter Higgins"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:9
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 6, message = FALSE, warning = FALSE, comment = "", cache = FALSE, fig.retina = 3)
+library(flipbookr)
+library(xaringan)
+library(xaringanthemer)
+library(tidyverse)
+library(medicaldata)
+library(janitor)
+prostate <- medicaldata::blood_storage %>% clean_names() %>% as_tibble()
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+xaringanthemer::style_duo_accent(
+  primary_color = "#00274C",
+  secondary_color = "#FFCB05",
+  header_font_google = google_font("Lato"),
+  code_font_google   = google_font("Roboto Mono"),
+  base_font_size = "20px",
+  code_font_size = "0.8rem",
+)
+```
+
+```{r xaringanExtra-share-again, echo=FALSE}
+xaringanExtra::use_share_again()
+# adds share bar to flipbooks
+```
+
+
+
+
+```{r demo2, include = FALSE, eval = FALSE}
+iris %>%
+# slow plot 
+  ggplot() +
+  aes(x = Species) + #BREAK
+  aes(y = Petal.Length) +
+  aes(color = factor(Species))  + #BREAK
+  aes(fill = factor(Species)) +
+  geom_violin(alpha = 0.3) +
+  labs(x = "Recurrence", 
+       y = "Prostate Volume") +
+  theme(legend.position = c(0.5, 0.8)) +
+  guides(fill = FALSE)#BREAK
+  
+```
+
+`r chunk_reveal("demo2", break_type = "user",
+    title = "Demonstration 2: Select Variables, then Violin Plot")`
+    
