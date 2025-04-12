@@ -1,0 +1,118 @@
+---
+title: "Plotting a categorical x and continuous y"
+output:
+  xaringan::moon_reader:
+    highlightLines: false
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature: 
+      countIncrementalSlides: false
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:10
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 8,fig.height = 6, message = FALSE, warning = FALSE, comment = "", cache = FALSE, fig.retina = 2)
+library(flipbookr)
+library(xaringan)
+library(xaringanthemer)
+library(tidyverse)
+
+ril_link <- "https://raw.githubusercontent.com/ybrandvain/datasets/refs/heads/master/clarkia_rils.csv"
+ril_data <- readr::read_csv(ril_link) |>
+  dplyr::mutate(growth_rate = case_when(growth_rate =="1.8O" ~ "1.80",
+                                          .default = growth_rate),  
+                growth_rate = as.numeric(growth_rate),
+                visited = mean_visits > 0)
+gc_rils <- ril_data |>
+  filter(location == "GC", !is.na(prop_hybrid), ! is.na(mean_visits))|>
+  select(petal_color, petal_area_mm, num_hybrid, offspring_genotyped, prop_hybrid, mean_visits , asd_mm,visited )
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+xaringanthemer::style_duo_accent(
+  primary_color = "#ed62ac",
+  secondary_color = "#3A5F0B",text_color = "#3A5F0B",title_slide_text_color = "#3A5F0B",
+  header_font_google = google_font("Lato"),
+  code_font_google   = google_font("Roboto Mono"),
+  base_font_size = "35px",
+  code_font_size = ".6rem",
+  text_slide_number_font_size = "0em"
+)
+
+# Set a global ggplot2 theme
+theme_set(
+ theme_xaringan( text_font_size = 35  )
+)
+
+```
+
+```{r xaringanExtra-share-again, echo=FALSE}
+xaringanExtra::use_share_again()
+# adds share bar to flipbooks
+```
+
+
+
+```{r demo1, include = FALSE, eval = FALSE}
+gc_rils %>%
+  ggplot(aes(x = visited,
+             y = prop_hybrid))  +#BREAK
+  geom_point(
+    size = 7,# bigger points #BREAK2
+    alpha = .4,# transparency #BREAK3
+             )
+```
+
+`r chunk_reveal("demo1",  break_type = "non_seq",  title = "Categorical x, continuous y: Scatter plot",widths  =c(.5,.5))`
+
+**Despite transparency its hard to distinguish overlapping points**
+    
+---
+
+
+`r chunk_reveal("demo1a",  break_type = "user",  title = "Categorical x, continuous y: Jitter plot",widths  =c(.5,.5))`
+    
+**[geom_jitter()](https://ggplot2.tidyverse.org/reference/geom_jitter.html)** spreads ot the data to avoid overplotting.  
+**[stat_summary()](https://ggplot2.tidyverse.org/reference/stat_summary.html)** can show means (and more)
+
+```{r demo1a, include = FALSE, eval = FALSE}
+ggplot(gc_rils , aes(x = visited,
+                  y = prop_hybrid,
+                 color = visited)) + 
+  geom_jitter(size=7, alpha=0.4, 
+              height = 0 )+ #BREAK
+  theme(legend.position = "none")+ # BREAK
+  stat_summary(color = "black",
+               fun = "mean",
+               size = 1.5)+ #BREAK
+  stat_summary(aes(group = 1),
+               color = "black",
+               geom = "line", lty=2)
+```
+
+
+---
+
+
+`r chunk_reveal("demo1b",  break_type = "user",  title = "Categorical x, continuous y: Sina plot",widths  =c(.5,.5))`
+    
+**[geom_sina()](https://ggforce.data-imaginist.com/reference/geom_sina.html)** sets width proportional to amount of data.
+**[stat_summary()](https://ggplot2.tidyverse.org/reference/stat_summary.html)** can show means (and more)
+
+```{r demo1b, include = FALSE, eval = FALSE}
+library(ggforce) #BREAK
+ggplot(gc_rils, aes(x = visited,
+                  y = prop_hybrid,
+                  color = visited))+ #BREAK
+  geom_sina(size = 7,  alpha = .4) + #BREAK
+  theme(legend.position = "none")  + #BREAK
+  stat_summary(color = "black",
+               fun = "mean",
+               size = 1.5)         + #BREAK
+  stat_summary(aes(group = 1),
+               color = "black",
+               geom = "line", lty=2)
+```
