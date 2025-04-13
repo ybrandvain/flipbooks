@@ -1,5 +1,5 @@
 ---
-title: "Plotting a categorical x and continuous y"
+title: "Plotting a categorical x and numeric y"
 output:
   xaringan::moon_reader:
     highlightLines: false
