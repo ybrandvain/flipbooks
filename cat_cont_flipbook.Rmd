@@ -39,8 +39,7 @@ xaringanthemer::style_duo_accent(
   code_font_google   = google_font("Roboto Mono"),
   base_font_size = "35px",
   code_font_size = ".6rem",
-  text_slide_number_font_size = "0em"
-)
+  text_slide_number_font_size = ".6em")
 
 # Set a global ggplot2 theme
 theme_set(
@@ -56,63 +55,360 @@ xaringanExtra::use_share_again()
 
 
 
-```{r demo1, include = FALSE, eval = FALSE}
-gc_rils %>%
+```{css, echo=FALSE}
+.left-column, .right-column {
+  display: inline-block;
+  vertical-align: top;
+  width: 46%;
+  padding: 0 1%;
+}
+
+.left-column pre {
+  font-size: 85%;
+  max-height: 400px;
+  overflow-y: auto;
+}
+```
+
+**Plotting a numerical y and a categorical x is hard**  
+
+This slideshow  works you through challenges and how to overcome them! These solutions include:  
+
+- Using jitter to avoid overplotting.  
+- Using color to differentiate values.  
+- Suppressing a redundant legend.  
+- Showing means on a plot.  
+
+---
+
+**Step 1: Basic ggplot setup**   
+Setting up aesthetic mapping <br> <br>
+
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
   ggplot(aes(x = visited,
-             y = prop_hybrid))  +#BREAK
-  geom_point(
-    size = 7,# bigger points #BREAK2
-    alpha = .4,# transparency #BREAK3
-             )
+             y = prop_hybrid))
 ```
+]
 
-`r chunk_reveal("demo1",  break_type = "non_seq",  title = "Categorical x, continuous y: Scatter plot",widths  =c(.5,.5))`
-
-**Despite transparency its hard to distinguish overlapping points**
-    
----
-
-
-`r chunk_reveal("demo1a",  break_type = "user",  title = "Categorical x, continuous y: Jitter plot",widths  =c(.5,.5))`
-    
-**[geom_jitter()](https://ggplot2.tidyverse.org/reference/geom_jitter.html)** spreads ot the data to avoid overplotting.  
-**[stat_summary()](https://ggplot2.tidyverse.org/reference/stat_summary.html)** can show means (and more)
-
-```{r demo1a, include = FALSE, eval = FALSE}
-ggplot(gc_rils , aes(x = visited,
-                  y = prop_hybrid,
-                 color = visited)) + 
-  geom_jitter(size=7, alpha=0.4, 
-              height = 0 )+ #BREAK
-  theme(legend.position = "none")+ # BREAK
-  stat_summary(color = "black",
-               fun = "mean",
-               size = 1.5)+ #BREAK
-  stat_summary(aes(group = 1),
-               color = "black",
-               geom = "line", lty=2)
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid))
 ```
+]
 
 
 ---
 
+**Step 1: Basic ggplot setup**  
+Adding points <br> <br>
 
-`r chunk_reveal("demo1b",  break_type = "user",  title = "Categorical x, continuous y: Sina plot",widths  =c(.5,.5))`
-    
-**[geom_sina()](https://ggforce.data-imaginist.com/reference/geom_sina.html)** sets width proportional to amount of data.
-**[stat_summary()](https://ggplot2.tidyverse.org/reference/stat_summary.html)** can show means (and more)
 
-```{r demo1b, include = FALSE, eval = FALSE}
-library(ggforce) #BREAK
-ggplot(gc_rils, aes(x = visited,
-                  y = prop_hybrid,
-                  color = visited))+ #BREAK
-  geom_sina(size = 7,  alpha = .4) + #BREAK
-  theme(legend.position = "none")  + #BREAK
-  stat_summary(color = "black",
-               fun = "mean",
-               size = 1.5)         + #BREAK
-  stat_summary(aes(group = 1),
-               color = "black",
-               geom = "line", lty=2)
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid)) +
+  geom_point()
 ```
+]
+
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid))+
+  geom_point()
+```
+]
+
+
+
+---
+
+**Step 1: Basic ggplot setup**  
+OH NO those points are too small.  
+Let's try bigger, somewhat transparent points.
+
+
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid)) +
+  geom_point(size = 6, 
+             alpha = .3)
+```
+]
+
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid)) +
+  geom_point(size = 6, 
+             alpha = .3)
+```
+]
+
+
+---
+
+
+
+class: center middle section-slide
+
+# Try jitterplots  
+
+
+
+---
+
+**Step 2: Try jitterplots**  
+It's still tough to differentiate overlapping points. 
+Let's switch to jitterplots to spread out our x.
+
+
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)
+# I set height equal to zero
+# So the plot doesn't lie.
+```
+]
+
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)
+# I set height equal to zero
+# So the plot doesn't lie.
+```
+]
+
+
+---
+
+
+**Step 2: Try jitterplots**  
+That helps - but now categories blend :(  
+Lets redundantly map visited on to color.
+
+
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)
+```
+]
+
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)
+```
+]
+
+
+---
+
+
+**Step 2: Try jitterplots**  
+Now the unnecessary legend takes up too much space.  
+Let's remove it!
+
+
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")
+```
+]
+
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")
+```
+]
+
+
+---
+
+
+
+
+class: center middle section-slide
+
+# Add summaries 
+
+
+
+---
+
+
+**Step 3: Add summaries**  
+Now let's add each group's mean <br><br>
+
+
+
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean")
+```
+]
+
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean")
+```
+]
+
+---
+
+
+**Step 3: Add summaries**  
+Those points are tiny.   
+Let's make them big and black
+
+
+
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean", 
+               color = "black", 
+               size = 4)
+```
+]
+
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean", 
+               color = "black", 
+               size = 1.5)
+```
+]
+
+---
+
+
+
+**Step 3: Add summaries**  
+Those points are tiny.   
+Let's make them big and black
+
+
+
+.left-column[
+```{r, eval=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean", 
+               color = "black", 
+               size = 1.5)+
+  stat_summary(aes(group = 1),
+    color = "black", geom = "line", 
+    lty = 2, size = 2)
+```
+]
+
+.right-column[
+```{r,echo=FALSE}
+gc_rils|>
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean", 
+               color = "black", 
+               size = 1.5)+
+  stat_summary(aes(group = 1),
+    color = "black", geom = "line", 
+    lty = 2, size = 2)
+```
+]
+
+---
+
+
+
+class: center middle section-slide
+
+# *'Fin'*
+
+

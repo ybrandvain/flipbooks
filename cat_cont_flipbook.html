@@ -30,357 +30,292 @@ class: center, middle, inverse, title-slide
 
 
 
-
-
-count: false
- 
-Categorical x, continuous y: Scatter plot
-.panel1-demo1-non_seq[
-
-``` r
-gc_rils %&gt;%
-  ggplot(aes(x = visited,
-             y = prop_hybrid))  +
-  geom_point(
-             )
-```
-]
- 
-.panel2-demo1-non_seq[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1_non_seq_01_output-1.png" width="576" /&gt;
-]
-
----
-count: false
- 
-Categorical x, continuous y: Scatter plot
-.panel1-demo1-non_seq[
-
-``` r
-gc_rils %&gt;%
-  ggplot(aes(x = visited,
-             y = prop_hybrid))  +
-  geom_point(
-*   size = 7,  # bigger points
-             )
-```
-]
- 
-.panel2-demo1-non_seq[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1_non_seq_02_output-1.png" width="576" /&gt;
-]
-
----
-count: false
- 
-Categorical x, continuous y: Scatter plot
-.panel1-demo1-non_seq[
-
-``` r
-gc_rils %&gt;%
-  ggplot(aes(x = visited,
-             y = prop_hybrid))  +
-  geom_point(
-    size = 7,  # bigger points
-*   alpha = .4,  # transparency
-             )
-```
-]
- 
-.panel2-demo1-non_seq[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1_non_seq_03_output-1.png" width="576" /&gt;
-]
-
-&lt;style&gt;
-.panel1-demo1-non_seq {
-  color: black;
-  width: 49%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
+&lt;style type="text/css"&gt;
+.left-column, .right-column {
+  display: inline-block;
+  vertical-align: top;
+  width: 46%;
+  padding: 0 1%;
 }
-.panel2-demo1-non_seq {
-  color: black;
-  width: 49%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel3-demo1-non_seq {
-  color: black;
-  width: NA%;
-  hight: 33%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
+
+.left-column pre {
+  font-size: 85%;
+  max-height: 400px;
+  overflow-y: auto;
 }
 &lt;/style&gt;
 
+**Plotting a numerical y and a categorical x is hard**  
 
+This slideshow  works you through challenges and how to overcome them! These solutions include:  
 
-**Despite transparency its hard to distinguish overlapping points**
-    
+- Using jitter to avoid overplotting.  
+- Using color to differentiate values.  
+- Suppressing a redundant legend.  
+- Showing means on a plot.  
+
 ---
 
+**Step 1: Basic ggplot setup**   
+Setting up aesthetic mapping &lt;br&gt; &lt;br&gt;
 
-count: false
- 
-Categorical x, continuous y: Jitter plot
-.panel1-demo1a-user[
+.left-column[
 
 ``` r
-*ggplot(gc_rils , aes(x = visited,
-*                 y = prop_hybrid,
-*                color = visited)) +
-* geom_jitter(size=7, alpha=0.4,
-*             height = 0 )
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid))
 ```
 ]
- 
-.panel2-demo1a-user[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1a_user_01_output-1.png" width="576" /&gt;
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-3-1.png" width="576" /&gt;
 ]
 
+
 ---
-count: false
- 
-Categorical x, continuous y: Jitter plot
-.panel1-demo1a-user[
+
+**Step 1: Basic ggplot setup**  
+Adding points &lt;br&gt; &lt;br&gt;
+
+
+.left-column[
 
 ``` r
-ggplot(gc_rils , aes(x = visited,
-                  y = prop_hybrid,
-                 color = visited)) +
-  geom_jitter(size=7, alpha=0.4,
-              height = 0 )+
-* theme(legend.position = "none")+  # BREAK
-* stat_summary(color = "black",
-*              fun = "mean",
-*              size = 1.5)
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid)) +
+  geom_point()
 ```
 ]
- 
-.panel2-demo1a-user[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1a_user_02_output-1.png" width="576" /&gt;
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-5-1.png" width="576" /&gt;
+]
+
+
+
+---
+
+**Step 1: Basic ggplot setup**  
+OH NO those points are too small.  
+Let's try bigger, somewhat transparent points.
+
+
+.left-column[
+
+``` r
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid)) +
+  geom_point(size = 6, 
+             alpha = .3)
+```
+]
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-7-1.png" width="576" /&gt;
+]
+
+
+---
+
+
+
+class: center middle section-slide
+
+# Try jitterplots  
+
+
+
+---
+
+**Step 2: Try jitterplots**  
+It's still tough to differentiate overlapping points. 
+Let's switch to jitterplots to spread out our x.
+
+
+.left-column[
+
+``` r
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)
+# I set height equal to zero
+# So the plot doesn't lie.
+```
+]
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-9-1.png" width="576" /&gt;
+]
+
+
+---
+
+
+**Step 2: Try jitterplots**  
+That helps - but now categories blend :(  
+Lets redundantly map visited on to color.
+
+
+.left-column[
+
+``` r
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)
+```
+]
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-11-1.png" width="576" /&gt;
+]
+
+
+---
+
+
+**Step 2: Try jitterplots**  
+Now the unnecessary legend takes up too much space.  
+Let's remove it!
+
+
+.left-column[
+
+``` r
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")
+```
+]
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-13-1.png" width="576" /&gt;
+]
+
+
+---
+
+
+
+
+class: center middle section-slide
+
+# Add summaries 
+
+
+
+---
+
+
+**Step 3: Add summaries**  
+Now let's add each group's mean &lt;br&gt;&lt;br&gt;
+
+
+
+.left-column[
+
+``` r
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean")
+```
+]
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-15-1.png" width="576" /&gt;
 ]
 
 ---
-count: false
- 
-Categorical x, continuous y: Jitter plot
-.panel1-demo1a-user[
+
+
+**Step 3: Add summaries**  
+Those points are tiny.   
+Let's make them big and black
+
+
+
+.left-column[
 
 ``` r
-ggplot(gc_rils , aes(x = visited,
-                  y = prop_hybrid,
-                 color = visited)) +
-  geom_jitter(size=7, alpha=0.4,
-              height = 0 )+
-  theme(legend.position = "none")+  # BREAK
-  stat_summary(color = "black",
-               fun = "mean",
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean", 
+               color = "black", 
+               size = 4)
+```
+]
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-17-1.png" width="576" /&gt;
+]
+
+---
+
+
+
+**Step 3: Add summaries**  
+Those points are tiny.   
+Let's make them big and black
+
+
+
+.left-column[
+
+``` r
+gc_rils|&gt;
+  ggplot(aes(x = visited,
+             y = prop_hybrid,
+             color = visited)) +
+  geom_jitter(size = 6,  
+             alpha = .3, 
+             height = 0)+
+  theme(legend.position = "none")+
+  stat_summary(fun = "mean", 
+               color = "black", 
                size = 1.5)+
-* stat_summary(aes(group = 1),
-*              color = "black",
-*              geom = "line", lty=2)
+  stat_summary(aes(group = 1),
+    color = "black", geom = "line", 
+    lty = 2, size = 2)
 ```
 ]
- 
-.panel2-demo1a-user[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1a_user_03_output-1.png" width="576" /&gt;
+
+.right-column[
+&lt;img src="cat_cont_flipbook_files/figure-html/unnamed-chunk-19-1.png" width="576" /&gt;
 ]
-
-&lt;style&gt;
-.panel1-demo1a-user {
-  color: black;
-  width: 49%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel2-demo1a-user {
-  color: black;
-  width: 49%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel3-demo1a-user {
-  color: black;
-  width: NA%;
-  hight: 33%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-&lt;/style&gt;
-
-
-    
-**[geom_jitter()](https://ggplot2.tidyverse.org/reference/geom_jitter.html)** spreads ot the data to avoid overplotting.  
-**[stat_summary()](https://ggplot2.tidyverse.org/reference/stat_summary.html)** can show means (and more)
-
-
-
 
 ---
 
 
-count: false
- 
-Categorical x, continuous y: Sina plot
-.panel1-demo1b-user[
 
-``` r
-*library(ggforce)
-```
-]
- 
-.panel2-demo1b-user[
+class: center middle section-slide
 
-]
-
----
-count: false
- 
-Categorical x, continuous y: Sina plot
-.panel1-demo1b-user[
-
-``` r
-library(ggforce)
-*ggplot(gc_rils, aes(x = visited,
-*                 y = prop_hybrid,
-*                 color = visited))
-```
-]
- 
-.panel2-demo1b-user[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1b_user_02_output-1.png" width="576" /&gt;
-]
-
----
-count: false
- 
-Categorical x, continuous y: Sina plot
-.panel1-demo1b-user[
-
-``` r
-library(ggforce)
-ggplot(gc_rils, aes(x = visited,
-                  y = prop_hybrid,
-                  color = visited))+
-* geom_sina(size = 7,  alpha = .4)
-```
-]
- 
-.panel2-demo1b-user[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1b_user_03_output-1.png" width="576" /&gt;
-]
-
----
-count: false
- 
-Categorical x, continuous y: Sina plot
-.panel1-demo1b-user[
-
-``` r
-library(ggforce)
-ggplot(gc_rils, aes(x = visited,
-                  y = prop_hybrid,
-                  color = visited))+
-  geom_sina(size = 7,  alpha = .4) +
-* theme(legend.position = "none")
-```
-]
- 
-.panel2-demo1b-user[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1b_user_04_output-1.png" width="576" /&gt;
-]
-
----
-count: false
- 
-Categorical x, continuous y: Sina plot
-.panel1-demo1b-user[
-
-``` r
-library(ggforce)
-ggplot(gc_rils, aes(x = visited,
-                  y = prop_hybrid,
-                  color = visited))+
-  geom_sina(size = 7,  alpha = .4) +
-  theme(legend.position = "none")  +
-* stat_summary(color = "black",
-*              fun = "mean",
-*              size = 1.5)
-```
-]
- 
-.panel2-demo1b-user[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1b_user_05_output-1.png" width="576" /&gt;
-]
-
----
-count: false
- 
-Categorical x, continuous y: Sina plot
-.panel1-demo1b-user[
-
-``` r
-library(ggforce)
-ggplot(gc_rils, aes(x = visited,
-                  y = prop_hybrid,
-                  color = visited))+
-  geom_sina(size = 7,  alpha = .4) +
-  theme(legend.position = "none")  +
-  stat_summary(color = "black",
-               fun = "mean",
-               size = 1.5)         +
-* stat_summary(aes(group = 1),
-*              color = "black",
-*              geom = "line", lty=2)
-```
-]
- 
-.panel2-demo1b-user[
-&lt;img src="cat_cont_flipbook_files/figure-html/demo1b_user_06_output-1.png" width="576" /&gt;
-]
-
-&lt;style&gt;
-.panel1-demo1b-user {
-  color: black;
-  width: 49%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel2-demo1b-user {
-  color: black;
-  width: 49%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel3-demo1b-user {
-  color: black;
-  width: NA%;
-  hight: 33%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-&lt;/style&gt;
-
-
-    
-**[geom_sina()](https://ggforce.data-imaginist.com/reference/geom_sina.html)** sets width proportional to amount of data.
-**[stat_summary()](https://ggplot2.tidyverse.org/reference/stat_summary.html)** can show means (and more)
+# *'Fin'*
 
 
     </textarea>
