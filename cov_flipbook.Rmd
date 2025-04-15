@@ -1,4 +1,5 @@
 ---
+title: "Calculating the covariance"
 output:
   xaringan::moon_reader:
     highlightLines: false
