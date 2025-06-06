@@ -1,0 +1,188 @@
+---
+title: "Making a Plot for a Talk"
+output:
+  xaringan::moon_reader:
+    highlightLines: false
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature: 
+      countIncrementalSlides: false
+      highlightStyle: github
+      highlightLines: true
+      ratio: 16:10
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width = 7,fig.height = 5.5, message = FALSE, warning = FALSE, comment = "", cache = FALSE, fig.retina = 2,fig.align = "center")
+library(flipbookr)
+library(xaringan)
+library(xaringanthemer)
+library(tidyverse)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+xaringanthemer::style_duo_accent(
+  primary_color = "#ed62ac",
+  secondary_color = "#3A5F0B",text_color = "#3A5F0B",title_slide_text_color = "#3A5F0B",
+  header_font_google = google_font("Lato"),
+  code_font_google   = google_font("Roboto Mono"),
+  base_font_size = "35px",
+  code_font_size = ".6rem",
+  text_slide_number_font_size = ".6em")
+
+# Set a global ggplot2 theme
+theme_set(
+ theme_xaringan( text_font_size = 35  )
+)
+
+library(ggplot2)
+library(grid)
+library(magick)
+img_raw <- "https://www.ashokcharan.com/Marketing-Analytics/images/sma-py-5.jpg"
+img <- image_read(img_raw)
+img_grob <- rasterGrob(img, interpolate = TRUE)
+```
+
+```{r xaringanExtra-share-again, echo=FALSE}
+xaringanExtra::use_share_again()
+# adds share bar to flipbooks
+```
+
+
+
+
+**Making a plot for a talk**  
+
+This slideshow  works you through how a plot could be revealed/ explained in a talk.   <br><br><br>
+
+**NOTE** There are many ways to make plots for talks and you probably don't wan this level of detail / story telling for all plots in talks. 
+
+
+---
+
+150 observations from three *Iris* species. 
+
+What's the relationship between Sepal Length and Petal Length?  
+
+```{r,echo=FALSE,out.width="40%"}
+library(knitr)
+include_graphics("https://www.ashokcharan.com/Marketing-Analytics/images/sma-py-5.jpg")
+
+```
+
+---
+
+- *x-axis:* Sepal Length.    
+- *y-axis:* Petal Length.  
+
+
+```{r,echo=FALSE}
+
+  ggplot(iris,aes(x = Sepal.Length,
+             y = Petal.Length))+
+    annotation_custom(img_grob,xmin = 7, xmax = 8, ymin = 1, ymax = 3)
+```
+
+
+---
+
+**Potential patterns: No relationship**    
+Petal length is not associated with sepal length.
+
+
+```{r,echo=FALSE}
+
+ggplot(iris,aes(x = Sepal.Length,
+             y = Petal.Length,
+             color = Species))+
+  geom_abline(slope = 0, intercept = mean(iris$Petal.Length ), 
+              lty = 2, size = 1.5, color = "purple")+
+  geom_point(alpha = 0,show.legend = FALSE)+
+    annotation_custom(img_grob,xmin = 7, xmax = 8, ymin = 1, ymax = 3)
+```
+
+
+---
+
+**Potential patterns: Positive relationship**    
+Flower parts get bigger or smaller together. 
+
+
+```{r,echo=FALSE}
+ggplot(iris,aes(x = Sepal.Length,
+                y = Petal.Length,
+                color = Species))+
+    geom_abline(slope = .65, intercept = 0, lty = 2,
+                lty = 2, size = 1.5, color = "purple")+
+    geom_point(alpha = 0,show.legend = FALSE)+
+    annotation_custom(img_grob,xmin = 7, xmax = 8, ymin = 1, ymax = 3)
+```
+
+---
+
+
+**Potential patterns: Negative relationship**    
+Flower parts trade off. 
+
+
+```{r,echo=FALSE}
+ggplot(iris,aes(x = Sepal.Length,
+                y = Petal.Length,
+                color = Species))+
+    geom_abline(slope = -.65, intercept = 8, lty = 2,
+                lty = 2, size = 1.5, color = "purple")+
+    geom_point(alpha = 0,show.legend = FALSE)+
+    annotation_custom(img_grob,xmin = 7, xmax = 8, ymin = 1, ymax = 3)
+```
+
+---
+
+
+**Observed pattern: positive relationship**    
+Flower parts grow together
+
+
+```{r,echo=FALSE}
+ggplot(iris,aes(x = Sepal.Length,
+                y = Petal.Length))+
+  geom_point(size = 3, alpha = .8)+
+  geom_smooth(method = "lm", se=FALSE)+
+  annotation_custom(img_grob,xmin = 7, xmax = 8, ymin = 1, ymax = 3)+
+  scale_color_discrete(guide = guide_legend(reverse = TRUE))
+```
+
+
+---
+
+
+
+class: center middle section-slide
+
+# *What patterns do we see within species?*
+
+---
+
+
+- Similarly positive slopes in  <span style="color:#379cf5;">*I. virginica*</span>  and <span style="color:MediumSeaGreen;">*I. versicolor*</span>.
+- No relationship in <span style="color:#f7456e;">*I. setosa*</span>. 
+
+
+```{r,echo=FALSE, fig.width=10, fig.align = "center" }
+ggplot(iris,aes(x = Sepal.Length,
+                y = Petal.Length,
+                color = Species))+
+  geom_point(size = 3, alpha = .8)+
+  geom_smooth(method = "lm", se=FALSE)+
+  annotation_custom(img_grob,xmin = 7, xmax = 8, ymin = 1, ymax = 3)+
+  scale_color_discrete(guide = guide_legend(reverse = TRUE))
+```
+
+
+---
+
+class: center middle section-slide
+
+# *'Fin'*
+
+
